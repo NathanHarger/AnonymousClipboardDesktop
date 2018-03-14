@@ -12,7 +12,8 @@ def submit_file():
 
 def submit_text():
 	print('form submit')
-
+def get_data():
+	print("get data")
 def limit_id_length(*args):
 	value = id_value.get()
 	trimmed_value = value.replace(' ','')
@@ -20,25 +21,45 @@ def limit_id_length(*args):
 		id_value.set(trimmed_value[:8])
 	print(id_value.get())
 
-def dragged_document(*args):
-	print("doc dragged")
 def about_app():
-	print("about app")
+	global root,im
+	about_app_window = Toplevel(root)
+	about_app_window.resizable(0, 0)
+
+	il = ttk.Label(about_app_window, image=im,text ='Anonymous Clipboard',font=('',18),compound=TOP)
+	il.grid()
+	ttk.Label(about_app_window, font=("",10),text="Copyright © 2018 Nathan Harger").grid(sticky=(N,S,E,W))
+def collect_id():
+	global root
+	collect_id_window = Toplevel(root)
+	collect_id_window.resizable(0, 0)
+	ttk.Label(collect_id_window,text="Enter Id:").grid(sticky=(N,S,E,W))
+	ttk.Entry(collect_id_window,textvariable=id_value).grid(column=1,row=0)
+	ttk.Button(collect_id_window,text="Submit",command=get_data).grid(column=2,row=0)
 root = Tk()
 root.title('Anonymous Clipboard')
+root.option_add('*tearOff', FALSE)
+
 
 menubar = Menu(root)
 
 
 appmenu = Menu(menubar, name='apple')
-appmenu.add_command(label='About My Application',command=about_app)
+appmenu.add_command(label='About Anonymous Clipboard',command=about_app)
 appmenu.add_separator()
 menubar.add_cascade(menu=appmenu)
 
 menu_file = Menu(menubar)
+menu_file.add_command(label='Get Data', command=collect_id)
 menu_edit = Menu(menubar)
+
+
+
 menubar.add_cascade(menu=menu_file, label='File')
 menubar.add_cascade(menu=menu_edit, label='Edit')
+
+windowmenu = Menu(menubar, name='window')
+menubar.add_cascade(menu=windowmenu, label='Window')
 
 root.config(menu= menubar)
 
@@ -60,11 +81,9 @@ frame_h = frame['height']
 
 
 im = im.subsample(9,9)
-il = ttk.Label(frame, image=im,text ='Anonymous Clipboard')
+il = ttk.Label(frame, image=im,text ='Anonymous Clipboard',font=('',18),compound=TOP)
 
-il['compound'] = TOP
 il['anchor'] = CENTER
-il['font']=('', 18)
 il.grid(column=0,row=0, columnspan=4 ,sticky=(N,W,E,S))
 
 
