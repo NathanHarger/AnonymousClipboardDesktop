@@ -1,19 +1,83 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-import requests as r
+from tkinter import messagebox
+import json
+
+import requests
+
+production_url = 'https://vast-chamber-77416.herokuapp.com'
+test_url = 'http://localhost:8000'
 def collect_file():
-	filename = filedialog.askopenfilename()
-	info.set(filename.split('/')[-1])
-	print(filename)
+	global filename
+	file = filedialog.askopenfilename()
+	filename.set(file)
+
+	info.set(file.split('/')[-1])
+	print(file)
 
 def submit_file():
-	print('form submit')
+
+	global filename,info_label
+	info.set('')
+
+	print('file submit')
+	files = {'file': open(filename.get(), 'rb')}
+	r = requests.post(production_url + "/api/clipboard/",files=files, data={'media_type':1})
+	json = r.json()
+	info.set(json['id'])
 
 def submit_text():
-	print('form submit')
+	global text_entry,info_label
+	text = text_entry.get("1.0",END)
+	r = requests.post(production_url + "/api/clipboard/",data = { 'text' :text, 'media_type':0})
+	json = r.json()
+	info.set(json['id'])
+
 def get_data():
+	global text_entry,id_value,root
+
 	print("get data")
+
+	r = requests.get(production_url + "/api/clipboard/getMetadata/",params={'session_id': id_value.get()})
+	metadata = r.json() 
+
+
+	if('media_type' not in metadata):
+		messagebox.showwarning(message="The id is invalid",detail="The data has already been retrieved or the id is incorrect.")
+	else:
+		print(metadata)
+		if(metadata['media_type'] == "Text"):
+			r = requests.get(production_url + "/api/clipboard/getData/",params={'session_id': id_value.get()})
+
+			print("text")
+			text_entry.delete(1.0, END)
+
+			text_entry.insert(END,r.json()['data'])
+
+		elif metadata['media_type'] == 'File':
+
+			
+			print(r.content)
+
+			filename = filedialog.asksaveasfilename(initialfile=metadata['FileMetaData']['file_name'])
+
+			file = open(filename,'wb')
+
+			if r.encoding is None:
+				r.encoding = 'utf-8'
+
+			data = requests.get(production_url + "/api/clipboard/getData/",params={'session_id': id_value.get()},stream=True)
+			print(data.content)
+
+			file.write(data.content)
+
+			file.close()
+			#xFileDownload(response.data, metadata.FileMetaData['file_name']);
+		  
+	   
+
+
 def limit_id_length(*args):
 	value = id_value.get()
 	trimmed_value = value.replace(' ','')
@@ -29,6 +93,7 @@ def about_app():
 	il = ttk.Label(about_app_window, image=im,text ='Anonymous Clipboard',font=('',18),compound=TOP)
 	il.grid()
 	ttk.Label(about_app_window, font=("",10),text="Copyright © 2018 Nathan Harger").grid(sticky=(N,S,E,W))
+
 def collect_id():
 	global root
 	collect_id_window = Toplevel(root)
@@ -40,6 +105,8 @@ root = Tk()
 root.title('Anonymous Clipboard')
 root.option_add('*tearOff', FALSE)
 
+
+filename = StringVar()
 
 menubar = Menu(root)
 
