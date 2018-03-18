@@ -101,32 +101,30 @@ def collect_id():
 	ttk.Label(collect_id_window,text="Enter Id:").grid(sticky=(N,S,E,W))
 	ttk.Entry(collect_id_window,textvariable=id_value).grid(column=1,row=0)
 	ttk.Button(collect_id_window,text="Submit",command=get_data).grid(column=2,row=0)
+
+	
+
+
 root = Tk()
 root.title('Anonymous Clipboard')
 root.option_add('*tearOff', FALSE)
-
 
 filename = StringVar()
 
 menubar = Menu(root)
 
-
-appmenu = Menu(menubar, name='apple')
-appmenu.add_command(label='About Anonymous Clipboard',command=about_app)
-appmenu.add_separator()
-menubar.add_cascade(menu=appmenu)
-
+windowsystem = root.tk.call('tk', 'windowingsystem')
+if windowsystem == 'aqua':
+	appmenu = Menu(menubar, name='apple')
+	appmenu.add_command(label='About Anonymous Clipboard',command=about_app)
+	appmenu.add_separator()
+	menubar.add_cascade(menu=appmenu)
+	windowmenu = Menu(menubar, name='window')
+	menubar.add_cascade(menu=windowmenu, label='Window')
+		
 menu_file = Menu(menubar)
 menu_file.add_command(label='Get Data', command=collect_id)
-menu_edit = Menu(menubar)
-
-
-
-menubar.add_cascade(menu=menu_file, label='File')
-menubar.add_cascade(menu=menu_edit, label='Edit')
-
-windowmenu = Menu(menubar, name='window')
-menubar.add_cascade(menu=windowmenu, label='Window')
+menubar.add_cascade(menu=menu_file,label='File')
 
 root.config(menu= menubar)
 
