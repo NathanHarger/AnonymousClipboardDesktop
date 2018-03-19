@@ -8,6 +8,7 @@ import requests
 
 production_url = 'https://vast-chamber-77416.herokuapp.com'
 test_url = 'http://localhost:8000'
+
 def collect_file():
 	global filename
 	file = filedialog.askopenfilename()
@@ -114,18 +115,22 @@ filename = StringVar()
 menubar = Menu(root)
 
 windowsystem = root.tk.call('tk', 'windowingsystem')
+
+
 if windowsystem == 'aqua':
 	appmenu = Menu(menubar, name='apple')
 	appmenu.add_command(label='About Anonymous Clipboard',command=about_app)
 	appmenu.add_separator()
 	menubar.add_cascade(menu=appmenu)
+	menu_file = Menu(menubar)
+	menu_file.add_command(label='Get Data', command=collect_id)
+	menubar.add_cascade(menu=menu_file,label='File')	
 	windowmenu = Menu(menubar, name='window')
 	menubar.add_cascade(menu=windowmenu, label='Window')
-		
-menu_file = Menu(menubar)
-menu_file.add_command(label='Get Data', command=collect_id)
-menubar.add_cascade(menu=menu_file,label='File')
-
+else:
+	menu_file = Menu(menubar)
+	menu_file.add_command(label='Get Data', command=collect_id)
+	menubar.add_cascade(menu=menu_file,label='File')	
 root.config(menu= menubar)
 
 #windowmenu = Menu(menubar, name='window')
@@ -137,7 +142,7 @@ root.config(menu= menubar)
 info = StringVar()
 id_value = StringVar()
 id_value.trace('w', limit_id_length)
-frame = ttk.Frame(root, padding="3 3 12 12")
+frame = ttk.Frame(root, padding="12 12 12 12")
 frame.grid(column=0,row=0,sticky=(N,W,E,S))
 
 im = PhotoImage(file='logo.gif',)
@@ -146,14 +151,16 @@ frame_h = frame['height']
 
 
 im = im.subsample(9,9)
-il = ttk.Label(frame, image=im,text ='Anonymous Clipboard',font=('',18),compound=TOP)
+il = ttk.Label(frame, image=im,text ='Anonymous Clipboard',font=('',18),compound=LEFT)
 
 il['anchor'] = CENTER
 il.grid(column=0,row=0, columnspan=4 ,sticky=(N,W,E,S))
 
 
 text_entry = Text(frame)
-text_entry.grid(column=0, row=1,columnspan=4, sticky=(W,E))
+
+text_entry.grid(column=0, row=1,columnspan=4,sticky=(N,W,E,S))
+
 
 
 
@@ -177,9 +184,10 @@ root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 frame.columnconfigure(0, weight=1)
 frame.columnconfigure(1, weight=1)
+frame.columnconfigure(2, weight=1)
 
 frame.rowconfigure(0, weight=1)
-frame.rowconfigure(1, weight=1)
-frame.rowconfigure(2, weight=1)
+frame.rowconfigure(1, weight=4)
+frame.rowconfigure(2, weight=0)
 
 root.mainloop()
