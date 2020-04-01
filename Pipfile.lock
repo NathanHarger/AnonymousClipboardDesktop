@@ -99,7 +99,7 @@
                 "sha256:931030d1d6282b7900e6b0a7ff9ecdb503b5e1e6781800dab2b71a9f39405bff",
                 "sha256:5cd36804f9f06a914a883fe682df5711d16d7b4f44d43189c5f013e7cd91e149"
             ],
-            "version": "==5.0.0"
+            "version": "==6.2.2"
         },
         "pyinstaller": {
             "hashes": [
